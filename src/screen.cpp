@@ -145,19 +145,23 @@ int checkButtonsPress(Button buttons[9]){
     return -1;
 }
 
-void createPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text &configLabel){
-    startScreenButtons[0] = Button("Options", vex::color(0xffe000), 360, 180);
-    startScreenButtons[1] = Button("Red", vex::color::red, 30, 60, 90, 100);
+void createPreAutonScreen(Button startScreenButtons[6], Text &selectedLabel, Text &configLabel){
+    startScreenButtons[0] = Button("Options", vex::color(0xffe000), 360, 140, 90, 40);
+    startScreenButtons[1] = Button("Red", vex::color::red, 30, 30, 90, 100);
     startScreenButtons[1].setChosen(true);
-    startScreenButtons[2] = Button("Blue", vex::color::blue, 140, 60, 90, 100);
-    startScreenButtons[3] = Button("Elliot", vex::color(0xc2c2c2), 250, 60, 90, 100);
+    startScreenButtons[2] = Button("Blue", vex::color::blue, 140, 30, 90, 100);
+    startScreenButtons[3] = Button("Elliot", vex::color(0xc2c2c2), 250, 30, 90, 100);
     startScreenButtons[3].setChosen(true);
-    startScreenButtons[4] = Button("Jacob", vex::color(0xc2c2c2), 360, 60, 90, 100);
+    startScreenButtons[4] = Button("Jacob", vex::color(0xc2c2c2), 360, 30, 90, 100);
+
+    startScreenButtons[5] = Button("Back", vex::color(0xffe000), 360, 175, 90, 35);
+    startScreenButtons[5].setBack(true);
+
     selectedLabel = Text("FillerText" , 10, 4, vex::mono20, vex::color::white);
     configLabel = Text("FillerText", 11, 4, vex::mono20, vex::color::white);
 }
 
-void showPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text &configLabel, std::string route, int teamColor, int driver){
+void showPreAutonScreen(Button startScreenButtons[6], Text &selectedLabel, Text &configLabel, std::string route, int teamColor, int driver){
     Brain.Screen.clearScreen();
     drawBackground();
     startScreenButtons[0].draw(vex::color(0xffe000), vex::color::white, vex::fontType::mono20, startScreenButtons[0].getName());
@@ -167,6 +171,10 @@ void showPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text 
         else
             startScreenButtons[i].draw(startScreenButtons[i].getColor(), vex::color::white, vex::fontType::mono20, startScreenButtons[i].getName(), 2, 3);       
     }
+
+    startScreenButtons[5].draw(startScreenButtons[5].getColor(), vex::color::white, vex::fontType::mono20, startScreenButtons[5].getName(), 2,3);
+
+
             
     Brain.Screen.setFillColor(vex::color(0x723A86));
     selectedLabel.setWords("Route Selected: " + route);
@@ -174,13 +182,15 @@ void showPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text 
 
     std::string colorString = teamColor ? "Blue" : "Red";
     std::string driverString = driver ? "Jacob        " : "Elliot        ";
+    
     configLabel.setWords("Config: " + colorString + " - " + driverString);
     configLabel.printText();
 }
 
-bool checkPreAutonButtons(Button startScreenButtons[5], int &teamColor, int &driver, Text &configLabel){
+bool checkPreAutonButtons(Button startScreenButtons[6], int &teamColor, int &driver, Text &configLabel, int &currentScreen){
     if(startScreenButtons[0].checkPress()){
-        return true;
+        currentScreen = 1;
+        //return true;
     }else{
         for(int i=1;i<5;i++){
             if(startScreenButtons[i].checkPress()){
@@ -198,6 +208,9 @@ bool checkPreAutonButtons(Button startScreenButtons[5], int &teamColor, int &dri
             driver = 1;
         }
     }
+    if(startScreenButtons[5].checkPress()){
+        currentScreen = 2; // return to Robot Select screen
+    }
 
     Brain.Screen.setFillColor(vex::color(0x723A86));
     std::string colorString = teamColor ? "Blue" : "Red";
@@ -212,4 +225,63 @@ void drawBackground(){
     Brain.Screen.setFillColor(vex::color(0x723A86));
     Brain.Screen.setPenColor(vex::color(0x723A86));
     Brain.Screen.drawRectangle(0, 0, 480, 240);
+}
+
+void createRobotSelectScreen(Button robotButtons[2], Text &header) {
+    robotButtons[0] = Button("Purple", vex::color::red, 90, 90, 100, 80);
+    robotButtons[1] = Button("Black", vex::color::blue, 270, 90, 100, 80);
+
+    robotButtons[0].setChosen(true);
+
+    header = Text("Select Robot", 8, 2, vex::fontType::mono30, vex::color::white);
+}
+
+void showRobotSelectScreen(Button robotButtons[2], Text &header) {
+    Brain.Screen.clearScreen();
+    drawBackground();
+
+    header.printText();
+
+    for (int i = 0; i < 2; i++) {
+        if (robotButtons[i].isChosen()) {
+            robotButtons[i].draw(
+                vex::color(0xffe000),
+                vex::color::white,
+                vex::fontType::mono20,
+                robotButtons[i].getName(),
+                2, 3
+            );
+        } else {
+            robotButtons[i].draw(
+                robotButtons[i].getColor(),
+                vex::color::white,
+                vex::fontType::mono20,
+                robotButtons[i].getName(),
+                2, 3
+            );
+        }
+    }
+}
+
+int checkRobotSelectPress(Button robotButtons[2]) {
+    for (int i = 0; i < 2; i++) {
+        if (robotButtons[i].checkPress()) {
+            robotButtons[0].setChosen(false);
+            robotButtons[1].setChosen(false);
+            robotButtons[i].setChosen(true);
+            return i;   // 0 = Red Bot, 1 = Blue Bot
+        }
+    }
+    return -1;
+}
+
+void loadRobotAutons(vex::color colors[8], std::string names[8], int selectedRobot, Button autonButtons[9]) {
+    for(int i = 0; i < 8; i++) {
+        autonButtons[i].setName(names[i]);
+        autonButtons[i].setColor(colors[i]);
+        autonButtons[i].setChosen(false);
+    }
+
+    // First button selected by default
+    autonButtons[0].setChosen(true);
 }

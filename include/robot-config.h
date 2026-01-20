@@ -43,3 +43,5 @@ extern digital_out intakeLift;
 extern digital_out dropDown;
 
 extern optical bottomColorSort;
+
+void configureRobot(int isRobotA);

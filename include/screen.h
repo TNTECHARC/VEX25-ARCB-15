@@ -48,8 +48,12 @@ void createAutonButtons(vex::color colors[8], std::string names[8], Button butto
 void clickButton(Button &selected, Button buttons[9]);
 void showAutonSelectionScreen(Button buttons[9]);
 int checkButtonsPress(Button buttons[9]);
-void createPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text &configLabel);
-void showPreAutonScreen(Button startScreenButtons[5], Text &selectedLabel, Text &configLabel, std::string route, int teamColor, int driver);
-bool checkPreAutonButtons(Button startScreenButtons[5], int &teamColor, int &driver, Text &configLabel);
+void createPreAutonScreen(Button startScreenButtons[6], Text &selectedLabel, Text &configLabel);
+void showPreAutonScreen(Button startScreenButtons[6], Text &selectedLabel, Text &configLabel, std::string route, int teamColor, int driver);
+bool checkPreAutonButtons(Button startScreenButtons[6], int &teamColor, int &driver, Text &configLabel, int &currentScreen);
 void drawBackground();
 
+void createRobotSelectScreen(Button robotButtons[2], Text &header);
+void showRobotSelectScreen(Button robotButtons[2], Text &header);
+int checkRobotSelectPress(Button robotButtons[2]);
+void loadRobotAutons(vex::color colors[8], std::string names[8], int selectedRobot, Button autonButtons[9]);
